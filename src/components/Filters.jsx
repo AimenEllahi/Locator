@@ -15,7 +15,7 @@ function Filters() {
         <Dropdown />
         <Dropdown />
       </div>
-      <button className="bg-gray-800 text-white w-full py-2 mt-2">
+      <button className="bg-gray-800 text-white w-full py-2 mt-4">
         Filter
       </button>
     </div>

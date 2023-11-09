@@ -54,13 +54,19 @@ function Map() {
   }, [dealers, selectedDealer]);
 
   return (
-    <div className="relative w-full h-[50vh]">
-      <div ref={mapContainer} className="absolute top-0 bottom-0 w-full" />
+    <div className="relative w-full h-[100vh]">
+      <div
+        ref={mapContainer}
+        className="absolute top-0 bottom-0 w-full rounded-xl mt-4 mb-4"
+      />
       {selectedDealer && (
-        <div className="absolute h-[25vh] w-[25vw] bottom-5 right-5 bg-black bg-opacity-60 text-white p-4 rounded-lg font-sans">
+        <div className="absolute h-[35vh] w-[25vw] bottom-5 right-5 bg-black bg-opacity-60 text-white p-4 rounded-lg font-sans">
+          <h2 className="text-2xl font-bold">Checkpoint</h2>
           <h3>{selectedDealer.attributes.name}</h3>
-          <p>Address: {selectedDealer.attributes.address}</p>
-          <p>Phone: {selectedDealer.attributes.phone}</p>
+          <h3 className="font-bold">Address:</h3>
+          <p>{selectedDealer.attributes.address}</p>
+          <h3 className="font-bold">Phone:</h3>
+          <p>{selectedDealer.attributes.phone}</p>
         </div>
       )}
     </div>

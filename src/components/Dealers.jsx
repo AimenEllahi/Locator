@@ -5,7 +5,7 @@ import Map from "./Map";
 function Dealers() {
   return (
     <div className="w-[90%] m-auto">
-      <div className="flex py-[2%] justify-between">
+      <div className="flex py-[6%] justify-between">
         <div className="w-[40%]">
           <h1 className="text-[38px] font-bold">
             Let us help you find a stocking dealer!
