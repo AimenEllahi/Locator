@@ -34,6 +34,12 @@ function Map() {
       style: "mapbox://styles/mapbox/light-v10",
     });
 
+    map.on("mouseover", "clusters", () => {
+      map.getCanvas().style.cursor = "pointer";
+    });
+    map.on("mouseout", "clusters", () => {
+      map.getCanvas().style.cursor = "";
+    });
     // Add markers for each dealer's location
     dealers.forEach((dealer) => {
       const { id, name, latitude, longitude } = dealer.attributes;
@@ -43,6 +49,13 @@ function Map() {
 
       marker.getElement().addEventListener("click", () => {
         setSelectedDealer(dealer);
+      });
+      marker.getElement().addEventListener("mouseover", () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+
+      marker.getElement().addEventListener("mouseleave", () => {
+        map.getCanvas().style.cursor = "";
       });
 
       if (selectedDealer && selectedDealer.id === id) {
@@ -54,18 +67,18 @@ function Map() {
   }, [dealers, selectedDealer]);
 
   return (
-    <div className="relative w-full h-[100vh]">
+    <div className='relative w-full h-[70vh]'>
       <div
         ref={mapContainer}
-        className="absolute top-0 bottom-0 w-full rounded-xl mt-4 mb-4"
+        className='absolute cursor-pointer top-0 bottom-0 w-full rounded-xl mt-4 mb-4'
       />
       {selectedDealer && (
-        <div className="absolute h-[35vh] w-[25vw] bottom-5 right-5 bg-black bg-opacity-60 text-white p-4 rounded-lg font-sans">
-          <h2 className="text-2xl font-bold">Checkpoint</h2>
+        <div className='absolute h-[35vh] w-[25vw] bottom-5 right-5 bg-black bg-opacity-60 text-white p-4 rounded-lg font-sans'>
+          <h2 className='text-2xl font-bold'>Checkpoint</h2>
           <h3>{selectedDealer.attributes.name}</h3>
-          <h3 className="font-bold">Address:</h3>
+          <h3 className='font-bold'>Address:</h3>
           <p>{selectedDealer.attributes.address}</p>
-          <h3 className="font-bold">Phone:</h3>
+          <h3 className='font-bold'>Phone:</h3>
           <p>{selectedDealer.attributes.phone}</p>
         </div>
       )}
