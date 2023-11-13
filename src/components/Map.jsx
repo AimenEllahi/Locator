@@ -41,6 +41,8 @@ function Map() {
         .setLngLat([parseFloat(longitude), parseFloat(latitude)])
         .addTo(map);
 
+      marker.getElement().style.cursor = "pointer";
+
       marker.getElement().addEventListener("click", () => {
         setSelectedDealer(dealer);
       });
@@ -61,8 +63,9 @@ function Map() {
       />
       {selectedDealer && (
         <div className="absolute h-[35vh] w-[25vw] bottom-5 right-5 bg-black bg-opacity-60 text-white p-4 rounded-lg font-sans">
-          <h2 className="text-2xl font-bold">Checkpoint</h2>
-          <h3>{selectedDealer.attributes.name}</h3>
+          <h3 className="text-2xl font-bold">
+            {selectedDealer.attributes.name}
+          </h3>
           <h3 className="font-bold">Address:</h3>
           <p>{selectedDealer.attributes.address}</p>
           <h3 className="font-bold">Phone:</h3>
