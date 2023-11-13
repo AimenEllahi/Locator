@@ -1,30 +1,56 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+import React, { useState } from "react";
 
-export default function Dropdown() {
+export default function Dropdown({ label, options }) {
+  const [show, setShow] = useState(false);
   return (
-    <Box
-      sx={{
-        minWidth: 260,
-        backgroundColor: "#F5F5F5",
-      }}
-    >
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Age</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          label="Age"
+    <>
+      <div className='relative w-full h-full inline-block text-left'>
+        <div>
+          <button
+            type='button'
+            className='inline-flex w-full h-14 font-bold items-center justify-between gap-x-1.5 rounded-md bg-gray-200 px-3 py-2 hover:border-0 group-focus-within:ring-0 ring-0 border-0 text-gray-900 '
+            onClick={() => setShow(!show)}
+          >
+            {label}
+            <svg
+              className='-mr-1 h-5 w-5 text-gray-400'
+              viewBox='0 0 20 20'
+              fill='currentColor'
+              aria-hidden='true'
+            >
+              <path
+                fillRule='evenodd'
+                d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'
+                clipRule='evenodd'
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div
+          className={`absolute right-0 z-10 mt-2 w-full origin-top-right rounded-md bg-gray-200 shadow-lg focus:outline-none ${
+            !show && "hidden"
+          }`}
+          role='menu'
+          tabIndex='-1'
         >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
-      </FormControl>
-    </Box>
+          <div className='py-1' role='none'>
+            {options.map((option, index) => (
+              <span
+                href='#'
+                key={index}
+                onClick={() => setShow(false)}
+                className='text-gray-700 cursor-pointer font-bold block px-4 py-2 text-sm'
+                role='menuitem'
+                tabIndex='-1'
+                id='menu-item-0'
+              >
+                {option.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
