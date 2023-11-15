@@ -6,6 +6,12 @@ const useStore = create((set) => ({
   productLineOptions: productLineOptions || [],
   categoryOptions: categoryOptions || [],
   brandOptions: brandOptions || [],
+  selectedProductLine: "",
+  selectedCategory: "",
+  selectedBrand: "",
+  setSelectedProductLine: (value) => set({ selectedProductLine: value }),
+  setSelectedCategory: (value) => set({ selectedCategory: value }),
+  setSelectedBrand: (value) => set({ selectedBrand: value }),
 }));
 
 export { useStore };

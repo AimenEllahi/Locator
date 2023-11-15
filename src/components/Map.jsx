@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
+import { useStore } from "../utils/Store";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiZmFiaWFubWMyMDIzIiwiYSI6ImNsb3EyNXZ0NjBkNjMycWxuYnR4dHBoamUifQ.Ixf-PoC7qOcveb-NoatYiA";
@@ -8,16 +9,57 @@ function Map() {
   const mapContainer = useRef(null);
   const tooltipRef = useRef(null);
 
+  const [data, setData] = useState(null);
+
   const [dealers, setDealers] = useState([]);
   const [selectedDealer, setSelectedDealer] = useState(null);
+  const { selectedProductLine, selectedCategory, selectedBrand } = useStore(
+    (state) => state
+  );
+
+  useEffect(() => {
+    if (!data) return;
+    // filter dealers
+    const filteredDealers = data?.filter((dealer) => {
+      let brandMatch = true;
+      let categoryMatch = true;
+      let productLineMatch = true;
+
+      if (selectedBrand) {
+        brandMatch = dealer.attributes.brands.data.some(
+          (brand) => brand.attributes.name === selectedBrand
+        );
+      }
+
+      if (selectedCategory) {
+        categoryMatch = dealer.attributes.product_categories.data.some(
+          (category) => category.attributes.name === selectedCategory
+        );
+      }
+
+      if (selectedProductLine) {
+        productLineMatch = dealer.attributes.product_lines.data.some(
+          (productLine) => {
+            return productLine.attributes.name === selectedProductLine;
+          }
+        );
+      }
+
+      // Return true only if all conditions are met
+      return brandMatch && categoryMatch && productLineMatch;
+    });
+
+    setDealers(filteredDealers);
+  }, [selectedProductLine, selectedCategory, selectedBrand]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://strapi-api-2jzf.onrender.com/api/dealers?sort[0]=name:asc&populate[product_lines][fields][0]=name&populate[brands][fields][0]=name&populate[product_categories][fields][0]=name&fields[0]=name&fields[1]=address&fields[2]=phone&fields[3]=latitude&fields[4]=longitude&fields[5]=postal_code&pagination[pageSize]=10&pagination[page]=1&publicationState=live&locale[0]=en"
+          "https://strapi-api-2jzf.onrender.com/api/dealers?populate=*"
         );
         const data = await response.json();
+        setData(data.data);
         setDealers(data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
