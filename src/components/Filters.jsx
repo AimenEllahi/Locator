@@ -18,14 +18,14 @@ function Filters() {
   } = useStore((state) => state);
   return (
     <div>
-      <div className='flex items-center'>
-        <BsFilterLeft className='text-2xl' />
-        <span className='text-2xl ml-2'>Filters</span>
+      <div className="flex items-center">
+        <BsFilterLeft className="text-2xl" />
+        <span className="text-2xl ml-2">Filters</span>
       </div>
-      <div className='flex w-full border  md:flex-row flex-col md:gap-x-2  md:h-14 mt-2'>
+      <div className="flex w-full md:flex-row flex-col md:gap-x-2 md:h-14 mt-2">
         <input
-          placeholder='Enter postal / Zip code'
-          className='border rounded-lg w-full px-3 h-full bg-gray-200 md:mb-2'
+          placeholder="Enter postal / Zip code"
+          className="border rounded-lg w-full px-3 py-4 h-full bg-gray-200 mb-6"
         />
         <Dropdown
           label={selectedProductLine || "Product Line"}
@@ -43,7 +43,7 @@ function Filters() {
           onClick={(option) => setSelectedBrand(option)}
         />
       </div>
-      <button className='bg-gray-800 text-white w-full py-2 mt-4'>
+      <button className="bg-gray-800 text-white w-full py-2 mt-4">
         Filter
       </button>
     </div>
