@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { useStore } from "../utils/Store";
+import ContactForm from "./ContactForm";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiZmFiaWFubWMyMDIzIiwiYSI6ImNsb3EyNXZ0NjBkNjMycWxuYnR4dHBoamUifQ.Ixf-PoC7qOcveb-NoatYiA";
@@ -10,7 +11,7 @@ function Map() {
   const tooltipRef = useRef(null);
 
   const [data, setData] = useState(null);
-
+  const [openForm, setOpenForm] = useState(false);
   const [dealers, setDealers] = useState([]);
   const [selectedDealer, setSelectedDealer] = useState(null);
   const { selectedProductLine, selectedCategory, selectedBrand } = useStore(
@@ -113,11 +114,20 @@ function Map() {
 
     return () => map.remove();
   }, [dealers]);
+
+  const handleOpenForm = () => {
+    setOpenForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setOpenForm(false);
+  };
+
   console.log(selectedDealer);
   return (
     <div className="relative w-full h-[70vh]">
       {selectedDealer && (
-        <div className="absolute z-10 h-[35vh] md:w-[25vw] w-[80vw] bottom-5 right-5 bg-black bg-opacity-60 text-white p-4 rounded-lg font-sans">
+        <div className="absolute z-10 h-auto md:w-[25vw] w-[80vw] bottom-5 right-5 bg-black bg-opacity-60 text-white p-4 rounded-lg font-sans">
           <h3 className="text-2xl font-bold">
             {selectedDealer.attributes.name}
           </h3>
@@ -125,7 +135,17 @@ function Map() {
           <p>{selectedDealer.attributes.address}</p>
           <h3 className="font-bold mt-2">Phone:</h3>
           <p>{selectedDealer.attributes.phone}</p>
+          <button className="text-gray-800 mt-2" onClick={handleOpenForm}>
+            Send Email
+          </button>
         </div>
+      )}
+      {openForm && (
+        <ContactForm
+          handleClose={handleCloseForm}
+          dealerName={selectedDealer.attributes.name}
+          // dealerEmail={selectedDealer.attributes.email}
+        />
       )}
       <div
         ref={mapContainer}
