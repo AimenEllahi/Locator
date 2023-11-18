@@ -9,9 +9,13 @@ const useStore = create((set) => ({
   selectedProductLine: "",
   selectedCategory: "",
   selectedBrand: "",
+  zipCode: "",
+  filter: false,
   setSelectedProductLine: (value) => set({ selectedProductLine: value }),
   setSelectedCategory: (value) => set({ selectedCategory: value }),
   setSelectedBrand: (value) => set({ selectedBrand: value }),
+  setZipCode: (value) => set({ zipCode: value }),
+  setFilter: (value) => set({ filter: value }),
 }));
 
 export { useStore };

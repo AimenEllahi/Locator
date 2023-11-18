@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { useStore } from "../utils/Store";
+import ContactForm from "./ContactForm";
+import axios from "axios";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiZmFiaWFubWMyMDIzIiwiYSI6ImNsb3EyNXZ0NjBkNjMycWxuYnR4dHBoamUifQ.Ixf-PoC7qOcveb-NoatYiA";
@@ -10,17 +12,77 @@ function Map() {
   const tooltipRef = useRef(null);
 
   const [data, setData] = useState(null);
-
+  const [openForm, setOpenForm] = useState(false);
   const [dealers, setDealers] = useState([]);
   const [selectedDealer, setSelectedDealer] = useState(null);
-  const { selectedProductLine, selectedCategory, selectedBrand } = useStore(
-    (state) => state
-  );
+  const [dealersWithinRange, setDealersWithinRange] = useState([]); // [
+  const {
+    selectedProductLine,
+    selectedCategory,
+    selectedBrand,
+    zipCode,
+    filter,
+  } = useStore((state) => state);
 
   useEffect(() => {
-    if (!data) return;
+    if (!data || !filter) return;
+    if (zipCode.length >= 4 && zipCode.length <= 7) {
+      let canadianZipCodes = "";
+      let americanZipCodes = "";
+      data.map((dealer) => {
+        if (dealer.attributes.postal_code.length === 5) {
+          if (americanZipCodes === "") {
+            americanZipCodes += dealer.attributes.postal_code;
+          } else {
+            americanZipCodes += "," + dealer.attributes.postal_code;
+          }
+        } else {
+          canadianZipCodes += dealer.attributes.postal_code + ",";
+        }
+      });
+
+      if (zipCode.length === 5) {
+        fetchRecords(americanZipCodes, "us");
+      } else {
+        fetchRecords(canadianZipCodes, "ca");
+      }
+    } else {
+      setDealersWithinRange(data);
+    }
+  }, [zipCode, data, filter]);
+
+  const fetchRecords = async (zipCodes, country) => {
+    try {
+      const response = await axios.get(
+        `https://api.zipcodestack.com/v1/distance?compare=${zipCodes}&code=${zipCode}&country=${country}&apikey=01HFHJPER6XYC9JJHRT6KRVHZX`
+      );
+      const responseArray = response.data.results;
+
+      const keysWithValuesLessThan100 = [];
+      for (const key in responseArray) {
+        if (responseArray[key] < 200) {
+          keysWithValuesLessThan100.push(key);
+        }
+      }
+
+      const allDealersWithinRange = data.filter((dealer) => {
+        return keysWithValuesLessThan100.includes(
+          dealer.attributes.postal_code
+        );
+      });
+
+      setDealersWithinRange(allDealersWithinRange);
+      console.log("dealersWithinRange", allDealersWithinRange);
+      console.log(keysWithValuesLessThan100);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (!data || !filter) return;
     // filter dealers
-    const filteredDealers = data?.filter((dealer) => {
+    const filteredDealers = dealersWithinRange?.filter((dealer) => {
       let brandMatch = true;
       let categoryMatch = true;
       let productLineMatch = true;
@@ -48,9 +110,14 @@ function Map() {
       // Return true only if all conditions are met
       return brandMatch && categoryMatch && productLineMatch;
     });
-
     setDealers(filteredDealers);
-  }, [selectedProductLine, selectedCategory, selectedBrand]);
+  }, [
+    selectedProductLine,
+    selectedCategory,
+    selectedBrand,
+    dealersWithinRange,
+    filter,
+  ]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,6 +128,7 @@ function Map() {
         const data = await response.json();
         setData(data.data);
         setDealers(data.data);
+        setDealersWithinRange(data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -113,11 +181,19 @@ function Map() {
 
     return () => map.remove();
   }, [dealers]);
-  console.log(selectedDealer);
+
+  const handleOpenForm = () => {
+    setOpenForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setOpenForm(false);
+  };
+
   return (
     <div className='relative w-full h-[70vh]'>
       {selectedDealer && (
-        <div className='absolute z-10 h-[35vh] w-[25vw] bottom-5 right-5 bg-black bg-opacity-60 text-white p-4 rounded-lg font-sans'>
+        <div className='absolute z-10 h-auto md:w-[25vw] w-[80vw] bottom-5 right-5 bg-black bg-opacity-60 text-white p-4 rounded-lg font-sans'>
           <h3 className='text-2xl font-bold'>
             {selectedDealer.attributes.name}
           </h3>
@@ -125,7 +201,17 @@ function Map() {
           <p>{selectedDealer.attributes.address}</p>
           <h3 className='font-bold mt-2'>Phone:</h3>
           <p>{selectedDealer.attributes.phone}</p>
+          <button className='text-gray-800 mt-2' onClick={handleOpenForm}>
+            Send Email
+          </button>
         </div>
+      )}
+      {openForm && (
+        <ContactForm
+          handleClose={handleCloseForm}
+          dealerName={selectedDealer.attributes.name}
+          // dealerEmail={selectedDealer.attributes.email}
+        />
       )}
       <div
         ref={mapContainer}

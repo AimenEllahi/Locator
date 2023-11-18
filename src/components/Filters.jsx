@@ -5,9 +5,6 @@ import { Input } from "@mui/material";
 import { useStore } from "../utils/Store";
 
 function Filters() {
-  const productLineOptions = useStore((state) => state.productLineOptions);
-  const categoryOptions = useStore((state) => state.categoryOptions);
-  const brandOptions = useStore((state) => state.brandOptions);
   const {
     setSelectedProductLine,
     setSelectedCategory,
@@ -15,6 +12,13 @@ function Filters() {
     selectedProductLine,
     selectedCategory,
     selectedBrand,
+    productLineOptions,
+    categoryOptions,
+    brandOptions,
+    setZipCode,
+    zipCode,
+    filter,
+    setFilter,
   } = useStore((state) => state);
   return (
     <div>
@@ -22,28 +26,46 @@ function Filters() {
         <BsFilterLeft className='text-2xl' />
         <span className='text-2xl ml-2'>Filters</span>
       </div>
-      <div className='flex w-full border  md:flex-row flex-col md:gap-x-2  md:h-14 mt-2'>
+      <div className='flex w-full md:flex-row flex-col md:gap-x-2 md:h-14 mt-2'>
         <input
+          value={zipCode}
+          onChange={(e) => {
+            setZipCode(e.target.value);
+            setFilter(false);
+          }}
+          minLength={4}
           placeholder='Enter postal / Zip code'
-          className='border rounded-lg w-full px-3 h-full bg-gray-200 md:mb-2'
+          className='border rounded-lg w-full px-3 py-4 h-full bg-gray-200 mb-6'
         />
         <Dropdown
           label={selectedProductLine || "Product Line"}
           options={[{ label: "Product Line" }, ...productLineOptions]}
-          onClick={(option) => setSelectedProductLine(option)}
+          onClick={(option) => {
+            setSelectedProductLine(option);
+            setFilter(false);
+          }}
         />
         <Dropdown
           label={selectedCategory || "Category"}
           options={[{ label: "Category" }, ...categoryOptions]}
-          onClick={(option) => setSelectedCategory(option)}
+          onClick={(option) => {
+            setSelectedCategory(option);
+            setFilter(false);
+          }}
         />
         <Dropdown
           label={selectedBrand || "Brand"}
           options={[{ label: "Brand" }, ...brandOptions]}
-          onClick={(option) => setSelectedBrand(option)}
+          onClick={(option) => {
+            setSelectedBrand(option);
+            setFilter(false);
+          }}
         />
       </div>
-      <button className='bg-gray-800 text-white w-full py-2 mt-4'>
+      <button
+        onClick={() => setFilter(true)}
+        className='bg-gray-800 text-white w-full py-2 mt-4'
+      >
         Filter
       </button>
     </div>
