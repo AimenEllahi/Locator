@@ -191,17 +191,18 @@ function Map() {
   };
 
   return (
-    <div className='relative w-full h-[70vh]'>
+    <div className="relative w-full h-[70vh]">
       {selectedDealer && (
-        <div className='absolute z-10 h-auto md:w-[25vw] w-[80vw] bottom-5 right-5 bg-black bg-opacity-60 text-white p-4 rounded-lg font-sans'>
-          <h3 className='text-2xl font-bold'>
+        <div className="absolute z-10 h-auto md:w-[25vw] w-[80vw] bottom-5 right-5 bg-black bg-opacity-60 text-white p-4 rounded-lg font-sans">
+          <h3 className="text-2xl font-bold">
             {selectedDealer.attributes.name}
           </h3>
-          <h3 className='font-bold mt-5'>Address:</h3>
+          <h3 className="font-bold mt-5">Address:</h3>
           <p>{selectedDealer.attributes.address}</p>
-          <h3 className='font-bold mt-2'>Phone:</h3>
+          <h3 className="font-bold mt-2">Phone:</h3>
           <p>{selectedDealer.attributes.phone}</p>
-          <button className='text-gray-800 mt-2' onClick={handleOpenForm}>
+
+          <button className="text-gray-800 mt-2" onClick={handleOpenForm}>
             Send Email
           </button>
         </div>
@@ -210,12 +211,13 @@ function Map() {
         <ContactForm
           handleClose={handleCloseForm}
           dealerName={selectedDealer.attributes.name}
-          // dealerEmail={selectedDealer.attributes.email}
+          dealerEmail={selectedDealer.attributes.email}
         />
       )}
+
       <div
         ref={mapContainer}
-        className='absolute cursor-pointer top-0 bottom-0 w-full rounded-xl mt-4 mb-4'
+        className="absolute cursor-pointer top-0 bottom-0 w-full rounded-xl mt-4 mb-4"
       />
     </div>
   );
